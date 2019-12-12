@@ -1,37 +1,107 @@
 package com.example.eventor;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 2;
-    private static final String TAG = "TAG";
-    private GoogleSignInClient mGoogleSignInClient;
-    private SignInButton signInButton;
+    private final static String TAG = "TAG";
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+    private EditText editTextUserName;
+    private EditText editTextPhoneNumber;
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        @Override
+        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+            Toast.makeText(SignInActivity.this, "Verification completed", Toast.LENGTH_LONG).show();
+            String code = phoneAuthCredential.getSmsCode();
+            if (code != null){
+                verifyCode(code);
+            }
+            signInSuccess();
+        }
 
+        @Override
+        public void onVerificationFailed(@NonNull FirebaseException e) {
+            signInFailureUI();
+            Toast.makeText(SignInActivity.this, "Verification Failed", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+
+            verificationId = s;
+
+            AlertDialog.Builder codeDialog = new AlertDialog.Builder(SignInActivity.this);
+            FrameLayout container = new FrameLayout(SignInActivity.this);
+            FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(100,100,100,100);
+            final EditText codeEditText = new EditText(getBaseContext());
+            codeEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            codeEditText.setLayoutParams(params);
+            container.addView(codeEditText);
+            codeDialog.setTitle("Verification Code")
+                    
+                    .setView(container)
+                    .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String code = codeEditText.getText().toString();
+                            if (code.length() < 6){
+                                signInFailureUI();
+                            } else {
+                                verifyCode(code);
+                            }
+
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            signInFailureUI();
+                        }
+                    })
+                    .setCancelable(false)
+                    .create();
+            codeDialog.show();
+
+
+
+
+        }
+    };
+
+    private Button signInButton;
+    private String userName;
+    private String phoneNumber;
+    private String verificationId;
 
 
 
@@ -40,94 +110,45 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-
-        signInButton = findViewById(R.id.sign_in_button);
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        //verificationId = new String();
+        editTextUserName = (EditText) findViewById(R.id.edit_text_user_name);
+        editTextPhoneNumber = (EditText) findViewById(R.id.edit_text_phone_number);
+        signInButton = (Button) findViewById(R.id.button_sign_in);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                signInButton.setClickable(false);
+                editTextPhoneNumber.setEnabled(false);
+                editTextUserName.setEnabled(false);
+                userName = editTextUserName.getText().toString();
+                phoneNumber = editTextPhoneNumber.getText().toString();
+                if (userName.equals("")) {
+                    Toast.makeText(SignInActivity.this, "Please Enter user name", Toast.LENGTH_SHORT).show();
+                } else if (phoneNumber.equals("")) {
+                    Toast.makeText(SignInActivity.this, "Please Enter phonr number", Toast.LENGTH_SHORT).show();
+                } else {
+                    PhoneAuthProvider phoneAuthProvider = PhoneAuthProvider.getInstance();
+                    phoneAuthProvider.verifyPhoneNumber(
+                            phoneNumber,        // Phone number to verify
+                            60,                 // Timeout duration
+                            TimeUnit.SECONDS,   // Unit of timeout
+                            SignInActivity.this,               // Activity (for callback binding)
+                            mCallbacks);        // OnVerificationStateChangedCallbacks
+                }
+
+
             }
         });
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null){
-                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    //MainActivity.this.finish();
-                    //startActivity(new Intent(MainActivity.this, MainScreenActivity.class));
-                }
-            }
-        };
 
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        /*
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-        */
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        mAuth.addAuthStateListener(mAuthListener);
 
 
 
     }
 
 
-
-
-
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-                // ...
-            }
-        }
-    }
-
-
-
-
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -135,16 +156,45 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+                            FirebaseUser user = task.getResult().getUser();
+                            Toast.makeText(SignInActivity.this, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                            signInSuccess();
+
+
+
+                            // ...
                         } else {
-                            // If sign in fails, display a message to the user.
+                            // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Auth went wrong", Toast.LENGTH_LONG);
-                            //Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                                Toast.makeText(SignInActivity.this, "signInWithCredential:failure", Toast.LENGTH_SHORT).show();
+                                signInFailureUI();
+                            }
                         }
                     }
                 });
+    }
+
+
+
+    private void verifyCode(String code){
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+        signInWithPhoneAuthCredential(credential);
+    }
+
+
+    private void signInFailureUI(){
+        editTextPhoneNumber.setEnabled(true);
+        editTextUserName.setEnabled(true);
+        signInButton.setClickable(true);
+    }
+
+    private void signInSuccess(){
+        Intent mainIntent = new Intent(SignInActivity.this, MainActivity.class);
+        mainIntent.putExtra("userName", userName);
+        mainIntent.putExtra("phoneNumber", phoneNumber);
+        startActivity(mainIntent);
+        finish();
     }
 }
