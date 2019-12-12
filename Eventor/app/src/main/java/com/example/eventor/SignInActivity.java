@@ -68,7 +68,7 @@ public class SignInActivity extends AppCompatActivity {
             codeEditText.setLayoutParams(params);
             container.addView(codeEditText);
             codeDialog.setTitle("Verification Code")
-                    
+
                     .setView(container)
                     .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
                         @Override
