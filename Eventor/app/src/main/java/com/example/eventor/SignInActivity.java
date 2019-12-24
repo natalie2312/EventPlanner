@@ -3,17 +3,24 @@ package com.example.eventor;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.SignInButton;
@@ -43,8 +50,10 @@ public class SignInActivity extends AppCompatActivity {
             String code = phoneAuthCredential.getSmsCode();
             if (code != null){
                 verifyCode(code);
+                signInSuccess();
+            } else {
+                signInFailureUI();
             }
-            signInSuccess();
         }
 
         @Override
@@ -68,7 +77,6 @@ public class SignInActivity extends AppCompatActivity {
             codeEditText.setLayoutParams(params);
             container.addView(codeEditText);
             codeDialog.setTitle("Verification Code")
-
                     .setView(container)
                     .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
                         @Override
@@ -91,17 +99,18 @@ public class SignInActivity extends AppCompatActivity {
                     .setCancelable(false)
                     .create();
             codeDialog.show();
-
-
-
-
         }
     };
 
     private Button signInButton;
     private String userName;
     private String phoneNumber;
+    private Spinner prefixPhoneSpinner;
     private String verificationId;
+    private String[] prefix = {"+972", "+1", "+32"};
+    private ArrayAdapter<String> prefixAdapter;
+    private String choosenPrefix;
+
 
 
 
@@ -113,22 +122,37 @@ public class SignInActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         //verificationId = new String();
+
         editTextUserName = (EditText) findViewById(R.id.edit_text_user_name);
         editTextPhoneNumber = (EditText) findViewById(R.id.edit_text_phone_number);
+        prefixPhoneSpinner = (Spinner) findViewById(R.id.prefix_phone_spinner);
+        prefixAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, prefix);
+        prefixAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prefixPhoneSpinner.setAdapter(prefixAdapter);
+        prefixPhoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                choosenPrefix = prefix[position];
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         signInButton = (Button) findViewById(R.id.button_sign_in);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signInButton.setClickable(false);
-                editTextPhoneNumber.setEnabled(false);
-                editTextUserName.setEnabled(false);
                 userName = editTextUserName.getText().toString();
-                phoneNumber = editTextPhoneNumber.getText().toString();
+                phoneNumber = choosenPrefix + editTextPhoneNumber.getText().toString();
                 if (userName.equals("")) {
                     Toast.makeText(SignInActivity.this, "Please Enter user name", Toast.LENGTH_SHORT).show();
-                } else if (phoneNumber.equals("")) {
+                } else if (phoneNumber.length() < 10) {
                     Toast.makeText(SignInActivity.this, "Please Enter phonr number", Toast.LENGTH_SHORT).show();
                 } else {
+                    signInButton.setClickable(false);
+                    editTextPhoneNumber.setEnabled(false);
+                    editTextUserName.setEnabled(false);
                     PhoneAuthProvider phoneAuthProvider = PhoneAuthProvider.getInstance();
                     phoneAuthProvider.verifyPhoneNumber(
                             phoneNumber,        // Phone number to verify
@@ -137,14 +161,8 @@ public class SignInActivity extends AppCompatActivity {
                             SignInActivity.this,               // Activity (for callback binding)
                             mCallbacks);        // OnVerificationStateChangedCallbacks
                 }
-
-
             }
         });
-
-
-
-
     }
 
 
@@ -159,10 +177,6 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser user = task.getResult().getUser();
                             Toast.makeText(SignInActivity.this, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
                             signInSuccess();
-
-
-
-                            // ...
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -180,7 +194,22 @@ public class SignInActivity extends AppCompatActivity {
 
     private void verifyCode(String code){
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        signInWithPhoneAuthCredential(credential);
+        //signInWithPhoneAuthCredential(credential);
+        signInWithCredential(credential);
+    }
+
+    private void signInWithCredential(PhoneAuthCredential credential){
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            signInSuccess();
+                        } else {
+                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 
@@ -191,10 +220,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void signInSuccess(){
+        User newUser = new User(userName, phoneNumber);
+        UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
+        userFirebaseHelper.insertNewUser(newUser);
         Intent mainIntent = new Intent(SignInActivity.this, MainActivity.class);
-        mainIntent.putExtra("userName", userName);
-        mainIntent.putExtra("phoneNumber", phoneNumber);
         startActivity(mainIntent);
         finish();
     }
+
+
+
 }

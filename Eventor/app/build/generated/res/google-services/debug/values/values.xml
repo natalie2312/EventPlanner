@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">357579807311-3o43t54a91qf1cftrikcafibblo5tf3u.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://eventor-e5a6e.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">357579807311</string>
+    <string name="google_api_key" translatable="false">AIzaSyDqKVoLTO4DoWdWdMoi_QGXuzMXfRsl8w4</string>
+    <string name="google_app_id" translatable="false">1:357579807311:android:5cd3d904677aafe0b5e83a</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDqKVoLTO4DoWdWdMoi_QGXuzMXfRsl8w4</string>
+    <string name="google_storage_bucket" translatable="false">eventor-e5a6e.appspot.com</string>
+    <string name="project_id" translatable="false">eventor-e5a6e</string>
+</resources>
