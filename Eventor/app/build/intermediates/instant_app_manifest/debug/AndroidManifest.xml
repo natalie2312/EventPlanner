@@ -10,6 +10,7 @@
         android:targetSdkVersion="29" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
     <!-- <uses-sdk android:minSdkVersion="14"/> -->
@@ -26,13 +27,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity android:name="com.example.eventor.EventActivity" />
+        <activity android:name="com.example.eventor.ContactsActivity" />
         <activity android:name="com.example.eventor.CreateEventActivity" />
         <activity android:name="com.example.eventor.SignInActivity" />
         <activity android:name="com.example.eventor.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

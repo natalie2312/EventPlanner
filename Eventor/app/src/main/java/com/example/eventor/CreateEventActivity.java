@@ -27,7 +27,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
 
 
-        saveEvent();
+       // saveEvent();
 
 
         //button and listener for contacts list

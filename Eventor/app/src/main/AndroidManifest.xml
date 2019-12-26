@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".EventActivity"/>
+        <activity android:name=".ContactsActivity"/>
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".SignInActivity" />
         <activity android:name=".MainActivity">
