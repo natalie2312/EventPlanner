@@ -3,7 +3,16 @@ package com.example.eventor;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
+import android.annotation.TargetApi;
+import android.content.ContentResolver;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import java.util.ArrayList;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -59,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     private String userName;
     private String phoneNumber;
 
-
+// Variable to save amount of contacts
+public static final int REQUEST_READ_CONTACTS = 79;
 
 
     @Override
@@ -221,4 +231,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 }

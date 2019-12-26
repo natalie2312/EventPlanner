@@ -1196,6 +1196,7 @@ id left
 id light
 id line1
 id line3
+id list
 id listMode
 id list_item
 id list_view_events
@@ -1364,6 +1365,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_contacts
 layout activity_create_event
 layout activity_event
 layout activity_main
