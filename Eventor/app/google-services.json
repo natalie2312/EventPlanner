@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "357579807311-kt6ockvop0vp7su4up1keiii4b1gu2p7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eventor",
+            "certificate_hash": "bf40b50e904dd36f70fbb94801aa0af87509946a"
+          }
+        },
+        {
           "client_id": "357579807311-ul8j777afsqntpu0gkv8obfp5t1hd3p4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

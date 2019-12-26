@@ -172,7 +172,7 @@ MERGED from [androidx.lifecycle:lifecycle-process:2.0.0] C:\Users\Edut\.gradle\c
 	android:theme
 		ADDED from C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:13:9-40
 activity#com.example.eventor.ContactsActivity
-ADDED from C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:9-63
+ADDED from C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:9-53
 	android:name
 		ADDED from C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:19-51
 activity#com.example.eventor.EventActivity

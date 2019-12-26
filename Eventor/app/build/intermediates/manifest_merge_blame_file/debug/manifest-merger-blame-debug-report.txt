@@ -51,7 +51,7 @@
 30        android:theme="@style/AppTheme" >
 30-->C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:13:9-40
 31        <activity android:name="com.example.eventor.ContactsActivity" />
-31-->C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:9-63
+31-->C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:9-53
 31-->C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:14:19-51
 32        <activity android:name="com.example.eventor.EventActivity" />
 32-->C:\Users\Edut\AndroidStudioProjects\GitProjects\Eventor\app\src\main\AndroidManifest.xml:15:9-51
