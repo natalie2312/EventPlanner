@@ -52,14 +52,12 @@ public class EventActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
 
         phoneNumber = currentUser.getPhoneNumber();
-        userName = "Omer";
         eventFirebaseHelper = new EventFirebaseHelper();
 
-        Event currentEvent = (Event) getIntent().getSerializableExtra("currentEvent");
-        //String userName = getIntent().getStringExtra("userName");
-        String phoneNumber = getIntent().getStringExtra("phoneNumber");
-        isManager = getIntent().getBooleanExtra("isManager", false);
-        //linearLayoutContainer = (LinearLayout) findViewById(R.id.linear_layout_container);
+        Event currentEvent = (Event) getIntent().getSerializableExtra(getString(R.string.intent_current_event));
+        userName = getIntent().getStringExtra(getString(R.string.intent_user_name));
+        String phoneNumber = getIntent().getStringExtra(getString(R.string.intent_phone_number));
+        isManager = getIntent().getBooleanExtra(getString(R.string.intent_is_manager), false);
 
         nameEventTextView = (TextView) findViewById(R.id.name_event_text_view);
         nameEventTextView.setText(currentEvent.getName());
@@ -72,10 +70,10 @@ public class EventActivity extends AppCompatActivity {
 
 
         //productsList = currentEvent.getProductsList();
-        productsList = currentEvent.getProductsList();
+        productsList = getProductsList(currentEvent.getProductsMap());
 
 
-        productsListAdapter = new ProductsListAdapter(this, isManager, "Omer", currentEvent);
+        productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList , currentEvent);
         //productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList);
         productsListView.setAdapter(productsListAdapter);
 
@@ -99,8 +97,11 @@ public class EventActivity extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * This function delete item prom the products list
+     * @param productRow the row of product
+     * @param position the position of product
+     */
     private void deleteItem(View productRow, final int position){
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this);
         FrameLayout container = new FrameLayout(this);
@@ -126,8 +127,11 @@ public class EventActivity extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * This function edit item of products list
+     * @param productRow the row of product
+     * @param position the position of product
+     */
     private void editItem(final View productRow, final int position){
         final AlertDialog.Builder editDialog = new AlertDialog.Builder(this);
         FrameLayout container = new FrameLayout(this);
@@ -165,9 +169,29 @@ public class EventActivity extends AppCompatActivity {
         editDialog.show();
     }
 
+    /**
+     * This function change exist product in other product
+     * @param productRow the row of product
+     * @param position the position of product
+     * @param newItem new product to change
+     */
     private void changeItem(View productRow, int position, String newItem){
         TextView tv = (TextView) productRow.findViewById(R.id.item_product_text_view);
         productsList.set(position, newItem);
         tv.setText(productsList.get(position));
+    }
+
+
+    /**
+     * This method return products list from productsMap
+     * @param productsMap to do list
+     * @return ArrayList of products
+     */
+    public ArrayList<String> getProductsList(Map<String, String> productsMap){
+        ArrayList<String> products = new ArrayList<>();
+        for (String product : productsMap.keySet()){
+            products.add(product);
+        }
+        return products;
     }
 }

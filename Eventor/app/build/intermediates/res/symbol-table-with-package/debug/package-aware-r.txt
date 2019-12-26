@@ -1196,6 +1196,7 @@ id left
 id light
 id line1
 id line3
+id list
 id listMode
 id list_item
 id list_view_events
@@ -1364,6 +1365,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_contacts
 layout activity_create_event
 layout activity_event
 layout activity_main
@@ -1473,6 +1475,10 @@ string google_app_id
 string google_crash_reporting_api_key
 string google_storage_bucket
 string hide_bottom_view_on_scroll_behavior
+string intent_current_event
+string intent_is_manager
+string intent_phone_number
+string intent_user_name
 string mtrl_chip_close_icon_content_description
 string nav_app_bar_navigate_up_description
 string nav_app_bar_open_drawer_description
@@ -1482,6 +1488,8 @@ string path_password_eye_mask_strike_through
 string path_password_eye_mask_visible
 string path_password_strike_through
 string project_id
+string save_phone_number
+string save_user_name
 string search_menu_title
 string status_bar_notification_info_overflow
 style AlertDialog_AppCompat
