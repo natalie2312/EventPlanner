@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_margin="10dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:id="@+id/item_product_checkbox"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Milk"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:id="@+id/item_product_text_view"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:text="Omer"
+            android:id="@+id/user_name_text_view_event"/>
+
+    </LinearLayout>
+
+    <!--
+<LinearLayout
+android:layout_width="wrap_content"
+android:id="@+id/manager_container"
+android:layout_alignParentRight="true"
+android:layout_height="wrap_content"
+android:orientation="horizontal">
+
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_image_button"
+            android:background="#00000000"
+            android:padding="10dp"
+            android:src="@drawable/edit_black_18dp"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_image_button"
+            android:background="#00000000"
+            android:padding="10dp"
+            android:src="@drawable/delete_black_18dp"/>
+
+
+
+    </LinearLayout>
+    -->
+</RelativeLayout>
