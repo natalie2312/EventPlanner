@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.eventor.SignInActivity.SIGN_IN_PREF;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Map<String, Boolean> eventsIdMap;
 
+
     private ArrayAdapter eventsAdapter;
     private EventsListAdapter eventsListAdapter;
     private ArrayList<Event> eventsList;
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private Query getEvent;
     private String userName;
     private String phoneNumber;
+
 
 
 
@@ -99,11 +104,13 @@ public class MainActivity extends AppCompatActivity {
             String phone = sharedPref.getString(getString(R.string.save_phone_number), phoneNumber);
             userName = sharedPref.getString(getString(R.string.save_user_name), phoneNumber);
 
+
             //ListView controller for exists events
             eventsListView = (ListView) findViewById(R.id.list_view_events);
 
             //list for exists events
             eventsIdMap = new HashMap<>();
+
             eventsList = new ArrayList();
             getListEvents(phoneNumber);
 
@@ -154,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 final boolean isManager = false;
                 for (DataSnapshot data : dataSnapshot.getChildren()){
                     eventsIdMap.put(data.getKey(), data.getValue(Boolean.class));
+
                 }
                 getEvent = databaseReference.child("Events");
                 getEvent.addValueEventListener(new ValueEventListener() {
@@ -163,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot data : dataSnapshot.getChildren()){
                             String id = data.getKey();
                             if (eventsIdMap.containsKey(id)){
+
                                 Event event = data.getValue(Event.class);
                                 eventsList.add(event);
                             }
@@ -173,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
@@ -198,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         currentEventIntent.putExtra(getString(R.string.intent_user_name), userName);
         currentEventIntent.putExtra(getString(R.string.intent_is_manager), eventsIdMap.get(currentEvent.getId()));
         currentEventIntent.putExtra(getString(R.string.intent_current_event), currentEvent);
+
         startActivity(currentEventIntent);
     }
 
@@ -229,4 +240,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

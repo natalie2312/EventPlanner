@@ -55,6 +55,7 @@ public class UserFirebaseHelper {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
                     User user = data.getValue(User.class);
                     if (user.getPhoneNumber().equals(phoneNumber)){
+
                         userExist = true;
                         break;
                     }

@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+
 import java.util.Map;
 
 class ProductsListAdapter extends ArrayAdapter<String> {
@@ -34,12 +36,14 @@ class ProductsListAdapter extends ArrayAdapter<String> {
 
     public ProductsListAdapter(@NonNull Context context, boolean isManager, String userName, ArrayList<String> products/*, ArrayList<String> gets*/, Event currentEvent) {
         super(context, R.layout.item_curren_event, products);
+
         this.context = context;
         this.userName = userName;
         this.isManager = isManager;
         this.event = currentEvent;
         this.productsMap = event.getProductsMap();
         this.products = products;
+
 
     }
 

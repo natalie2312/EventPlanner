@@ -3,6 +3,7 @@ package com.example.eventor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public class Event implements Serializable {
     private ArrayList<String> invitedList;
 
     //Default constructor
+
     public Event(){}
     public Event(String name, String date, String location){
         this.name = name;
@@ -60,6 +62,7 @@ public class Event implements Serializable {
      * @param product to remove
      */
     public void removeProduct(String product){
+
         if (productsMap.containsKey(product)){
             productsMap.remove(product);
         }
@@ -69,6 +72,7 @@ public class Event implements Serializable {
      * This method remove current bring product
      * @param product to remove from
      */
+
     public void removeBringProduct(String product){
         if (productsMap.containsKey(product)){
             productsMap.put(product, "");
@@ -127,18 +131,19 @@ public class Event implements Serializable {
         return id;
     }
 
+
     /**
      * This method vreate ArrayList of all the events
      * @return
      */
     /*public ArrayList<String> productsList(){
+
         ArrayList<String> products = new ArrayList<>();
         for (String product : productsMap.keySet()){
             products.add(product);
         }
         return products;
     }*/
-
 
 
     /**

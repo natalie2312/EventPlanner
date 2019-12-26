@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
@@ -58,6 +59,7 @@ public class SignInActivity extends AppCompatActivity {
     private String chosenPrefix;
 
 
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -67,6 +69,7 @@ public class SignInActivity extends AppCompatActivity {
                 verifyCode(code);
                 signInSuccess();
                 saveUserOnTheDevice();
+
             } else {
                 signInFailureUI();
             }
@@ -154,6 +157,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 userName = editTextUserName.getText().toString();
                 phoneNumber = chosenPrefix + editTextPhoneNumber.getText().toString();
+
                 if (userName.equals("")) {
                     Toast.makeText(SignInActivity.this, "Please Enter user name", Toast.LENGTH_SHORT).show();
                 } else if (phoneNumber.length() < 10) {
@@ -187,6 +191,7 @@ public class SignInActivity extends AppCompatActivity {
                             Toast.makeText(SignInActivity.this, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
                             signInSuccess();
                             saveUserOnTheDevice();
+
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -249,6 +254,7 @@ public class SignInActivity extends AppCompatActivity {
         editor.putString(getString(R.string.save_user_name), userName);
         editor.commit();
     }
+
 
 
 
