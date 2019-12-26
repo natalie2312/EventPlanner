@@ -5,8 +5,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
@@ -40,9 +44,22 @@ import java.util.concurrent.TimeUnit;
 public class SignInActivity extends AppCompatActivity {
 
     private final static String TAG = "TAG";
+    public final static String SIGN_IN_PREF = "SignInPreferences";
     private FirebaseAuth mAuth;
     private EditText editTextUserName;
     private EditText editTextPhoneNumber;
+
+    private Button signInButton;
+    private String userName;
+    private String phoneNumber;
+    private Spinner prefixPhoneSpinner;
+    private String verificationId;
+    private String[] prefix = {"+972", "+1", "+32"};
+    private ArrayAdapter<String> prefixAdapter;
+    private String chosenPrefix;
+
+
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -51,6 +68,8 @@ public class SignInActivity extends AppCompatActivity {
             if (code != null){
                 verifyCode(code);
                 signInSuccess();
+                saveUserOnTheDevice();
+
             } else {
                 signInFailureUI();
             }
@@ -102,14 +121,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     };
 
-    private Button signInButton;
-    private String userName;
-    private String phoneNumber;
-    private Spinner prefixPhoneSpinner;
-    private String verificationId;
-    private String[] prefix = {"+972", "+1", "+32"};
-    private ArrayAdapter<String> prefixAdapter;
-    private String choosenPrefix;
+
 
 
 
@@ -132,7 +144,7 @@ public class SignInActivity extends AppCompatActivity {
         prefixPhoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                choosenPrefix = prefix[position];
+                chosenPrefix = prefix[position];
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -144,7 +156,8 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userName = editTextUserName.getText().toString();
-                phoneNumber = choosenPrefix + editTextPhoneNumber.getText().toString();
+                phoneNumber = chosenPrefix + editTextPhoneNumber.getText().toString();
+
                 if (userName.equals("")) {
                     Toast.makeText(SignInActivity.this, "Please Enter user name", Toast.LENGTH_SHORT).show();
                 } else if (phoneNumber.length() < 10) {
@@ -177,6 +190,8 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser user = task.getResult().getUser();
                             Toast.makeText(SignInActivity.this, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
                             signInSuccess();
+                            saveUserOnTheDevice();
+
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -205,6 +220,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             signInSuccess();
+                            saveUserOnTheDevice();
                         } else {
                             Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -227,6 +243,18 @@ public class SignInActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+
+    /**
+     * This method save phoneNumber and userName on the device
+     */
+    private void saveUserOnTheDevice(/*String phoneNumber, String userName*/){
+        SharedPreferences sharedPref = getSharedPreferences("SignInPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.save_phone_number), phoneNumber);
+        editor.putString(getString(R.string.save_user_name), userName);
+        editor.commit();
+    }
+
 
 
 

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Eventor</string>
+    <string name="save_user_name">user_name</string>
+    <string name="save_phone_number">phone_number</string>
+    <string name="intent_phone_number">intent_phone_number</string>
+    <string name="intent_user_name">intent_user_name</string>
+    <string name="intent_is_manager">intent_is_manager</string>
+    <string name="intent_current_event">intent_current_event</string>
+
 </resources>

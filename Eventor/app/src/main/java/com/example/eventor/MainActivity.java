@@ -3,17 +3,11 @@ package com.example.eventor;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import java.util.ArrayList;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.eventor.SignInActivity.SIGN_IN_PREF;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabCreateNewEvent;
 
 
+    private Map<String, Boolean> eventsIdMap;
+
+
     private ArrayAdapter eventsAdapter;
     private EventsListAdapter eventsListAdapter;
     private ArrayList<Event> eventsList;
@@ -63,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbarMenu;
 
-    Query getEventsQuery;
-    Query getEvent;
+    private Query getEventsQuery;
+    private Query getEvent;
     private String userName;
     private String phoneNumber;
 
-// Variable to save amount of contacts
-public static final int REQUEST_READ_CONTACTS = 79;
+
+
 
 
     @Override
@@ -99,10 +99,18 @@ public static final int REQUEST_READ_CONTACTS = 79;
             phoneNumber = currentUser.getPhoneNumber();
             userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
 
+            //get phoneNumber and userName from the device
+            SharedPreferences sharedPref = getSharedPreferences(SIGN_IN_PREF, Context.MODE_PRIVATE);
+            String phone = sharedPref.getString(getString(R.string.save_phone_number), phoneNumber);
+            userName = sharedPref.getString(getString(R.string.save_user_name), phoneNumber);
+
+
             //ListView controller for exists events
             eventsListView = (ListView) findViewById(R.id.list_view_events);
 
             //list for exists events
+            eventsIdMap = new HashMap<>();
+
             eventsList = new ArrayList();
             getListEvents(phoneNumber);
 
@@ -149,12 +157,11 @@ public static final int REQUEST_READ_CONTACTS = 79;
         getEventsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //final Map<String, Boolean> eventsIdMap = new HashMap<>();
-                final ArrayList<String> eventsId = new ArrayList<>();
+                eventsIdMap = new HashMap<>();
                 final boolean isManager = false;
                 for (DataSnapshot data : dataSnapshot.getChildren()){
-                    eventsId.add(data.getKey());
-                    //eventsIdMap.put(data.getKey(), data.getValue(Boolean.class));
+                    eventsIdMap.put(data.getKey(), data.getValue(Boolean.class));
+
                 }
                 getEvent = databaseReference.child("Events");
                 getEvent.addValueEventListener(new ValueEventListener() {
@@ -163,7 +170,8 @@ public static final int REQUEST_READ_CONTACTS = 79;
                         eventsList.clear();
                         for (DataSnapshot data : dataSnapshot.getChildren()){
                             String id = data.getKey();
-                            if (eventsId.contains(id)){
+                            if (eventsIdMap.containsKey(id)){
+
                                 Event event = data.getValue(Event.class);
                                 eventsList.add(event);
                             }
@@ -196,10 +204,11 @@ public static final int REQUEST_READ_CONTACTS = 79;
     private void openChosenEvent(int position){
         Event currentEvent = eventsList.get(position);
         Intent currentEventIntent = new Intent(MainActivity.this, EventActivity.class);
-        currentEventIntent.putExtra("phoneNumber", phoneNumber);
-        currentEventIntent.putExtra("isManager", true);
-        //currentEventIntent.putExtra("userName", userName);
-        currentEventIntent.putExtra("currentEvent", currentEvent);
+        currentEventIntent.putExtra(getString(R.string.intent_phone_number), phoneNumber);
+        currentEventIntent.putExtra(getString(R.string.intent_user_name), userName);
+        currentEventIntent.putExtra(getString(R.string.intent_is_manager), eventsIdMap.get(currentEvent.getId()));
+        currentEventIntent.putExtra(getString(R.string.intent_current_event), currentEvent);
+
         startActivity(currentEventIntent);
     }
 
@@ -231,8 +240,5 @@ public static final int REQUEST_READ_CONTACTS = 79;
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 }

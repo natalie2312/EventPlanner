@@ -2,10 +2,8 @@ package com.example.eventor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,10 +13,10 @@ public class Event implements Serializable {
     private String name;
     private String location;
     private String date;
-    //private ArrayList<String> productsList;
     private Map<String, String> productsMap;
     private ArrayList<String> invitedList;
 
+    //Default constructor
 
     public Event(){}
     public Event(String name, String date, String location){
@@ -28,24 +26,53 @@ public class Event implements Serializable {
         this.id = generateIdEvent();
         this.productsMap = new HashMap<>();
         //invitedList = new ArrayList<>();
+    }
 
+    //Copy constructor
+    public Event(Event mEvent){
+        setName(mEvent.getName());
+        setLocation(mEvent.getLocation());
+        setDate(mEvent.getDate());
+        setProductsMap(mEvent.getProductsMap());
+        this.id = generateIdEvent();
     }
 
 
-
-    public void addProduct(String product, String howGet){
+    /**
+     * This method add to the products new product and set how bring this product
+     * @param product to add
+     * @param howBring to set
+     */
+    public void addProduct(String product, String howBring){
         if (!productsMap.containsKey(product)) {
-            productsMap.put(product, howGet);
+            productsMap.put(product, howBring);
         }
     }
+
+    /**
+     * This method add product to the products
+     * @param product to add
+     */
     public void addProduct(String product){
         addProduct(product, "");
     }
-    public void removeProducts(String product){
+
+    /**
+     * This method remov product from the products
+     * @param product to remove
+     */
+    public void removeProduct(String product){
+
         if (productsMap.containsKey(product)){
             productsMap.remove(product);
         }
     }
+
+    /**
+     * This method remove current bring product
+     * @param product to remove from
+     */
+
     public void removeBringProduct(String product){
         if (productsMap.containsKey(product)){
             productsMap.put(product, "");
@@ -100,26 +127,23 @@ public class Event implements Serializable {
         return productsMap;
     }
 
+    public String getId() {
+        return id;
+    }
+
+
     /**
      * This method vreate ArrayList of all the events
      * @return
      */
-    public ArrayList<String> getProductsList(){
+    /*public ArrayList<String> productsList(){
+
         ArrayList<String> products = new ArrayList<>();
         for (String product : productsMap.keySet()){
             products.add(product);
         }
         return products;
-    }
-
-    public String getId() {
-        return id;
-    }
-    /*
-    public ArrayList<String> getInvitedList() {
-        return invitedList;
-    }
-    */
+    }*/
 
 
     /**
@@ -129,6 +153,4 @@ public class Event implements Serializable {
     private String generateIdEvent(){
         return UUID.randomUUID().toString();
     }
-
-
 }

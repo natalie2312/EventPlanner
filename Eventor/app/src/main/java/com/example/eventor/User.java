@@ -32,9 +32,7 @@ public class User implements Serializable {
 
     //copy constructor
     public User(User mUser){
-        setPhoneNumber(mUser.getPhoneNumber());
-        setName(mUser.getName());
-        setEventsMap(mUser.getEventsMap());
+        new User(mUser.getName(), mUser.getPhoneNumber());
     }
 
     //getters
