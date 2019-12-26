@@ -2,6 +2,7 @@ package com.example.eventor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -44,7 +45,7 @@ public class CreateEventActivity extends AppCompatActivity {
      * This method open the contact list to create order list for the event.
      */
     private void openContactList(){
-
+        startActivity(new Intent(CreateEventActivity.this, ContactsActivity.class));
     }
 
 
