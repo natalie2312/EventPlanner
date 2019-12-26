@@ -29,7 +29,6 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.eventor.ContactsActivity" />
         <activity android:name="com.example.eventor.EventActivity" />
         <activity android:name="com.example.eventor.CreateEventActivity" />
         <activity android:name="com.example.eventor.SignInActivity" />

@@ -60,7 +60,7 @@ public class CreateEventActivity extends AppCompatActivity {
      * This method open the contact list to create order list for the event.
      */
     private void openContactList(){
-        startActivity(new Intent(CreateEventActivity.this, ContactsActivity.class));
+
     }
 
 
