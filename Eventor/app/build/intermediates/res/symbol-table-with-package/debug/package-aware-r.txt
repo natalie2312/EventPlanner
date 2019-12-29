@@ -1063,6 +1063,7 @@ drawable design_password_eye
 drawable design_snackbar_background
 drawable edit_black_18dp
 drawable exit_app_white_24dp
+drawable f2
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
 drawable ic_launcher_background
@@ -1089,6 +1090,7 @@ drawable person_add_white_24dp
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
+id Add
 id CTRL
 id FUNCTION
 id META
@@ -1137,17 +1139,20 @@ id clip_horizontal
 id clip_vertical
 id collapseActionView
 id container
+id container_events
 id content
 id contentPanel
 id coordinator
 id custom
 id customPanel
 id dark
+id date
 id date_event
 id date_event_container
 id date_event_text_view
 id decor_content_parent
 id default_activity_button
+id delete_item
 id design_bottom_sheet
 id design_menu_item_action_area
 id design_menu_item_action_area_stub
@@ -1162,6 +1167,7 @@ id edit_text_user_name
 id end
 id enterAlways
 id enterAlwaysCollapsed
+id event_name
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
@@ -1171,6 +1177,7 @@ id fill
 id fill_horizontal
 id fill_vertical
 id filled
+id finish
 id fixed
 id forever
 id ghost_view
@@ -1189,6 +1196,7 @@ id invisible
 id italic
 id item_product_checkbox
 id item_product_text_view
+id item_title
 id item_touch_helper_previous_elevation
 id labeled
 id largeLabel
@@ -1201,6 +1209,7 @@ id listMode
 id list_item
 id list_view_events
 id list_view_products
+id location
 id location_event
 id location_event_container
 id location_event_text_view
@@ -1289,6 +1298,10 @@ id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
+id textView3
+id textView4
+id textView5
+id textView6
 id text_input_password_toggle
 id textinput_counter
 id textinput_error
@@ -1394,6 +1407,7 @@ layout notification_template_custom_big
 layout notification_template_icon_group
 layout notification_template_part_chronometer
 layout notification_template_part_time
+layout product_item
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
@@ -1475,6 +1489,10 @@ string google_app_id
 string google_crash_reporting_api_key
 string google_storage_bucket
 string hide_bottom_view_on_scroll_behavior
+string intent_current_event
+string intent_is_manager
+string intent_phone_number
+string intent_user_name
 string mtrl_chip_close_icon_content_description
 string nav_app_bar_navigate_up_description
 string nav_app_bar_open_drawer_description
@@ -1484,6 +1502,8 @@ string path_password_eye_mask_strike_through
 string path_password_eye_mask_visible
 string path_password_strike_through
 string project_id
+string save_phone_number
+string save_user_name
 string search_menu_title
 string status_bar_notification_info_overflow
 style AlertDialog_AppCompat
