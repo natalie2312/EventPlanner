@@ -74,13 +74,13 @@ public class EventActivity extends AppCompatActivity {
         productsList = getProductsList(currentEvent.getProductsMap());
 
 
-        productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList , currentEvent);
+        productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList, currentEvent);
 
         //productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList);
         productsListView.setAdapter(productsListAdapter);
 
 
-        if (isManager){
+        if (isManager) {
             //permission only for managers.
             productsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
@@ -101,14 +101,15 @@ public class EventActivity extends AppCompatActivity {
 
     /**
      * This function delete item prom the products list
+     *
      * @param productRow the row of product
-     * @param position the position of product
+     * @param position   the position of product
      */
 
-    private void deleteItem(View productRow, final int position){
+    private void deleteItem(View productRow, final int position) {
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this);
         FrameLayout container = new FrameLayout(this);
-        FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         deleteDialog.setTitle("Delete Item")
                 .setMessage("Are you sure do you want delete " + productsList.get(position) + "?")
                 .setView(container)
@@ -132,14 +133,15 @@ public class EventActivity extends AppCompatActivity {
 
     /**
      * This function edit item of products list
+     *
      * @param productRow the row of product
-     * @param position the position of product
+     * @param position   the position of product
      */
 
-    private void editItem(final View productRow, final int position){
+    private void editItem(final View productRow, final int position) {
         final AlertDialog.Builder editDialog = new AlertDialog.Builder(this);
         FrameLayout container = new FrameLayout(this);
-        FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         //params.setMargins(100,100,100,100);
         final EditText editItemEditText = new EditText(this);
         //editItemEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -151,7 +153,7 @@ public class EventActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String item = editItemEditText.getText().toString();
-                        if (item.isEmpty()){
+                        if (item.isEmpty()) {
                             return;
                         } else {
                             changeItem(productRow, position, item);
@@ -175,12 +177,13 @@ public class EventActivity extends AppCompatActivity {
 
     /**
      * This function change exist product in other product
+     *
      * @param productRow the row of product
-     * @param position the position of product
-     * @param newItem new product to change
+     * @param position   the position of product
+     * @param newItem    new product to change
      */
 
-    private void changeItem(View productRow, int position, String newItem){
+    private void changeItem(View productRow, int position, String newItem) {
         TextView tv = (TextView) productRow.findViewById(R.id.item_product_text_view);
         productsList.set(position, newItem);
         tv.setText(productsList.get(position));
@@ -189,13 +192,16 @@ public class EventActivity extends AppCompatActivity {
 
     /**
      * This method return products list from productsMap
+     *
      * @param productsMap to do list
      * @return ArrayList of products
      */
-    public ArrayList<String> getProductsList(Map<String, String> productsMap){
+    public ArrayList<String> getProductsList(Map<String, String> productsMap) {
         ArrayList<String> products = new ArrayList<>();
-        for (String product : productsMap.keySet()){
-            products.add(product);
+        if (productsMap != null){
+            for (String product : productsMap.keySet()) {
+                products.add(product);
+            }
         }
         return products;
     }

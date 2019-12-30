@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:layoutDirection="ltr"
-
+    android:background="@drawable/f2"
     android:orientation="vertical">
 
 
@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_text_user_name"
-            android:hint="Enter your name"></EditText>
+            android:layout_marginTop="40dp"
+            android:hint="Enter your name"/>
 
 
 
@@ -45,7 +46,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/edit_text_phone_number"
             android:inputType="phone"
-            android:hint="Enter your phone number"></EditText>
+            android:hint="Enter your phone number"/>
+
 
 
 
@@ -53,17 +55,34 @@
     </LinearLayout>
 
 
-
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+
         android:id="@+id/button_sign_in"
-        android:text="Sign In">
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="30dp"
+        android:background="?android:attr/actionModeBackground"
+        android:text="Sign in"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        >
     </Button>
 
 
-
-
-
-
 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
