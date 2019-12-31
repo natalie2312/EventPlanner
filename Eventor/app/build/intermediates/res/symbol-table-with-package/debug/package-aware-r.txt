@@ -1152,7 +1152,6 @@ id date_event_container
 id date_event_text_view
 id decor_content_parent
 id default_activity_button
-id delete_item
 id design_bottom_sheet
 id design_menu_item_action_area
 id design_menu_item_action_area_stub

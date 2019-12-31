@@ -1,7 +1,7 @@
-#Sun Dec 29 02:24:31 IST 2019
-base.0=C\:\\Users\\Natalie\\Desktop\\android\\EventPlanner\\Eventor\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
+#Tue Dec 31 03:40:08 IST 2019
+base.0=C\:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
 path.1=classes.dex
 renamed.1=classes2.dex
 path.0=classes.dex
 renamed.0=classes.dex
-base.1=C\:\\Users\\Natalie\\Desktop\\android\\EventPlanner\\Eventor\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex
+base.1=C\:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex

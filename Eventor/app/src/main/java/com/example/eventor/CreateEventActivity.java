@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CreateEventActivity extends AppCompatActivity {
@@ -40,10 +41,10 @@ public class CreateEventActivity extends AppCompatActivity {
     private ListView contanerEvents;
 
 
-    ArrayAdapter<String> adapter;
-    ArrayList<String> itemList;
-
+    private ArrayAdapter<String> adapter;
+    //private ArrayList<String> itemList;
     private ArrayList<String> productsList;
+
     private Map<String, String> productsMap;
 
     private ListView productsListView;
@@ -63,47 +64,46 @@ public class CreateEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_event);
 
 
-//        saveEvent();
-
         saveButton = findViewById(R.id.finish);
-        itemList = new ArrayList<>();
+        productsList = new ArrayList<>();
+        productsMap = new HashMap<>();
 
         eventName = (EditText) findViewById(R.id.event_name);
         date = (EditText) findViewById(R.id.date);
         location= (EditText) findViewById(R.id.location);
         contanerEvents = (ListView) findViewById(R.id.container_events);
+        final Event newEvent = new Event(eventNameStr, dateStr, locationStr);
 
         ref = FirebaseDatabase.getInstance().getReference("Events");
 
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
 
                 eventNameStr = eventName.getText().toString();
-                dateStr = date.getText().toString();
-                locationStr = location.getText().toString();
-
                 if (TextUtils.isEmpty(eventNameStr)){
                     eventName.setError("required");
                     return;
                 }
 
+
+                dateStr = date.getText().toString();
                 if (TextUtils.isEmpty(dateStr) ) {
                     date.setError("required");
                     return;
                 }
-                if(TextUtils.isEmpty(locationStr)) {
 
+                locationStr = location.getText().toString();
+                if(TextUtils.isEmpty(locationStr)) {
                     location.setError("required");
                     return;
-
                 }
+                Event event = new Event(eventNameStr, dateStr, locationStr);
+                event.setProductsMap(productsMap);
+                saveEvent(event);
 
-                saveEvent();
                 clear_form();
-                moveToEventActivity();
-
+                moveToEventActivity(event);
             }
         });
 
@@ -111,13 +111,13 @@ public class CreateEventActivity extends AppCompatActivity {
         Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddItem();
+                AddItem(newEvent);
             }
         });
 
 
 
-        adapter = new ArrayAdapter<String>(CreateEventActivity.this, R.layout.product_item, R.id.item_title, itemList);
+        adapter = new ArrayAdapter<String>(CreateEventActivity.this, R.layout.product_item, R.id.item_title, productsList);
         contanerEvents.setAdapter(adapter);
 
 //        productsListAdapter = new ProductsListAdapter(this, isManager, "Omer", currentEvent);
@@ -143,9 +143,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     }
 
-    private void AddItem(){
-        //    EditText editText = new EditText(Main3Activity.this);
-        //    contanerEvents.addView(editText);
+    private void AddItem(final Event event){
         final EditText itemEdiText= new EditText(this);
         AlertDialog dialog= new AlertDialog.Builder(this)
                 .setTitle("new Item:")
@@ -156,8 +154,11 @@ public class CreateEventActivity extends AppCompatActivity {
                         Toast.makeText(CreateEventActivity.this, itemEdiText.getText().toString(), Toast.LENGTH_SHORT).show();
                         //TODO: save to firebase
                         String item = String.valueOf(itemEdiText.getText());
-                        itemList.add(item);
+                        EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
+                        eventFirebaseHelper.addProduct(event.getId(), item);
+                        productsList.add(item);
                         adapter.notifyDataSetChanged();
+                        productsMap.put(item, "");
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -165,12 +166,8 @@ public class CreateEventActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void moveToEventActivity(){
-
-
+    private void moveToEventActivity(Event event){
         Intent currentEventIntent= new Intent(CreateEventActivity.this, EventActivity.class);
-        Event event = new Event(eventNameStr, dateStr, locationStr);
-
         currentEventIntent.putExtra(getString(R.string.intent_current_event) ,event);
         startActivity(currentEventIntent);
         finish();
@@ -188,18 +185,16 @@ public class CreateEventActivity extends AppCompatActivity {
         location.getText().clear();
         date.getText().clear();
     }
-
-    private void saveEvent(){
+/**/
+    private void saveEvent(Event event){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String phoneNumber = currentUser.getPhoneNumber();
 
-        Event event = new Event(eventNameStr, dateStr, locationStr);
-//        event.addProduct("Tea", "Omer");
-//        event.addProduct("Milk");
-//        event.addProduct("Ice", "Rafi");
+
         EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
         eventFirebaseHelper.insertNewEvent(event.getId(), event);
+
 
         UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
         userFirebaseHelper.addEvent(phoneNumber, event.getId(), true);
@@ -215,7 +210,10 @@ public class CreateEventActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        String productToRemove = productsList.get(position);
+                        productsMap.remove(productToRemove);
                         productsList.remove(position);
+                        adapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
