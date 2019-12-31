@@ -76,6 +76,10 @@ public class EventFirebaseHelper {
     }
 
 
+
+
+
+
     public void addProduct(final String idEvent, final String product, final String howBring){
         Query addProductQuery = databaseReference.child(EVENTS);
 
@@ -119,9 +123,9 @@ public class EventFirebaseHelper {
         addProduct(idEvent, product, "");
     }
 
-    public void deleteProduct(String thisProduct, String productToChange) {
-        String key = databaseReference.child("Events").child("productsMap").child(thisProduct).getKey();
-        databaseReference.child("Events").child("productsList").child(key).removeValue();
+    public void deleteProduct(String thisProduct) {
+        String key = databaseReference.child(EVENTS).child(PRODUCTS_MAP).child(thisProduct).getKey();
+        databaseReference.child(EVENTS).child(PRODUCTS_MAP).child(key).removeValue();
     }
 
 
