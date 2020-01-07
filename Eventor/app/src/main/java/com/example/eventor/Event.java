@@ -13,6 +13,7 @@ public class Event implements Serializable {
     private String name;
     private String location;
     private String date;
+    private boolean hasImage;
     private Map<String, String> productsMap;
     private ArrayList<String> invitedList;
 
@@ -24,6 +25,7 @@ public class Event implements Serializable {
         this.date = date;
         this.location = location;
         this.id = generateIdEvent();
+        setHasImage(false);
         this.productsMap = new HashMap<>();
         //invitedList = new ArrayList<>();
     }
@@ -101,6 +103,9 @@ public class Event implements Serializable {
         this.productsMap = productsMap;
     }
 
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
+    }
     /*
     public void setInvitedList(ArrayList<String> invitedList) {
         this.invitedList = invitedList;
@@ -131,6 +136,9 @@ public class Event implements Serializable {
         return id;
     }
 
+    public boolean getHasImage() {
+        return hasImage;
+    }
 
     /**
      * This method vreate ArrayList of all the events

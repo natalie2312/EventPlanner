@@ -1,8 +1,13 @@
 package com.example.eventor;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +16,29 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +66,9 @@ public class CreateEventActivity extends AppCompatActivity {
     private ListView productsListView;
     private ProductsListAdapter productsListAdapter;
 
+    private ImageView imageEvent;
+    private SelectImageDialogFragment selectImageDialogFragment;
+
 
     private String eventNameStr;
     private String dateStr;
@@ -58,11 +77,34 @@ public class CreateEventActivity extends AppCompatActivity {
     private FloatingActionButton fabAddPerson;
 
 
+    private Event newEvent;
+    private EventFirebaseHelper eventFirebaseHelper;
+    private Bitmap eventBitmap;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+        eventFirebaseHelper = new EventFirebaseHelper();
+
+        selectImageDialogFragment = new SelectImageDialogFragment(this);
+        selectImageDialogFragment.setOnChosenImageListener(new SelectImageDialogFragment.OnChosenImageListener() {
+            @Override
+            public void onChosenImage(Bitmap chosenImage) {
+                imageEvent.setImageBitmap(chosenImage);
+                eventBitmap = chosenImage;
+            }
+        });
+        imageEvent = (ImageView) findViewById(R.id.image_event);
+        imageEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImageDialogFragment.show(getSupportFragmentManager(), "Choose Image");
+            }
+        });
 
         saveButton = findViewById(R.id.finish);
         productsList = new ArrayList<>();
@@ -72,7 +114,7 @@ public class CreateEventActivity extends AppCompatActivity {
         date = (EditText) findViewById(R.id.date);
         location= (EditText) findViewById(R.id.location);
         contanerEvents = (ListView) findViewById(R.id.container_events);
-        final Event newEvent = new Event(eventNameStr, dateStr, locationStr);
+        newEvent = new Event(eventNameStr, dateStr, locationStr);
 
         ref = FirebaseDatabase.getInstance().getReference("Events");
 
@@ -154,7 +196,7 @@ public class CreateEventActivity extends AppCompatActivity {
                         Toast.makeText(CreateEventActivity.this, itemEdiText.getText().toString(), Toast.LENGTH_SHORT).show();
                         //TODO: save to firebase
                         String item = String.valueOf(itemEdiText.getText());
-                        EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
+                        //EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
                         eventFirebaseHelper.addProduct(event.getId(), item);
                         productsList.add(item);
                         adapter.notifyDataSetChanged();
@@ -198,6 +240,9 @@ public class CreateEventActivity extends AppCompatActivity {
 
         UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
         userFirebaseHelper.addEvent(phoneNumber, event.getId(), true);
+        if (eventBitmap != null){
+            addImage(event.getId(), eventBitmap);
+        }
     }
 
     private void deleteItem(View productRow, final int position){
@@ -226,5 +271,68 @@ public class CreateEventActivity extends AppCompatActivity {
                 .create();
         deleteDialog.show();
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        selectImageDialogFragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+
+
+    public void addImage(final String eventId, Bitmap bitmap) {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        final StorageReference imageReference = storageReference.child("Images").child("EventImages").child(eventId + ".png");
+        //StorageReference imageReference = storageReference.child("/Images/EventImages/" + eventId + ".png");
+
+
+        if (imageBytes != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading");
+            progressDialog.show();
+
+
+            UploadTask uploadTask = (UploadTask) imageReference.putBytes(imageBytes);
+            uploadTask.
+                    addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            //progressDialog.dismiss();
+                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                            DatabaseReference databaseReference = firebaseDatabase.getReference();
+                            //Task<Uri> url = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                            databaseReference.child("Events").child(eventId).child("hasImage").setValue(true);
+                            Toast.makeText(CreateEventActivity.this, "File Uploaded ", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //progressDialog.dismiss();
+                            Toast.makeText(CreateEventActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            //displaying the upload progress
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                        }
+                    });
+        }
+
+
+    }
+
 
 }
