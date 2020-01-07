@@ -5,6 +5,14 @@
     android:layout_height="wrap_content">
 
 
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:src="@drawable/default_event_image"
+        android:id="@+id/event_image_view"
+        />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

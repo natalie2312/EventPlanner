@@ -5,100 +5,116 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="16dp"
     android:layout_height="match_parent">
 
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView4"
-            android:layout_width="84dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:text="Event: "
+            android:layout_alignParentStart="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@android:color/background_dark"
-            android:textSize="30sp"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="16dp" />
+            android:textColor="@android:color/background_dark" />
 
         <EditText
             android:id="@+id/event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_alignParentEnd="true"
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="142dp" />
+    </RelativeLayout>
 
 
 
-    </LinearLayout>
-
-
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="86dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
+            android:layout_alignParentStart="true"
             android:text="Date:"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@android:color/background_dark"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="73dp" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:ems="10"
             android:inputType="date"
             tools:layout_editor_absoluteX="142dp"
             tools:layout_editor_absoluteY="73dp" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView6"
-            android:layout_width="154dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:text="Location:"
+            android:layout_alignParentStart="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@android:color/background_dark"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="73dp" />
+            android:textColor="@android:color/background_dark" />
 
         <EditText
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:layout_alignParentEnd="true"
             android:inputType="textPersonName"
             tools:layout_editor_absoluteX="142dp"
             tools:layout_editor_absoluteY="73dp" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginStart="4dp"
+            android:fontFamily="sans-serif-condensed"
+            android:text="Selecting Image:"
+            android:layout_centerVertical="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@android:color/background_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="73dp"/>
+
+        <ImageView
+            android:id="@+id/image_event"
+            android:layout_height="80dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/default_event_image"
+            android:layout_width="80dp" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
