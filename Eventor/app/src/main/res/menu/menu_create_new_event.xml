@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/beck_to_events_list_item"
+        android:title="show_selected_contacts"
+        app:showAsAction="always"
+        android:icon="@drawable/round_arrow_back_24">
+    </item>
+
+    <item android:id="@+id/add_product_item"
+        android:visible="false"
+        android:title="add_product"
+        app:showAsAction="always"
+        android:icon="@drawable/add_white_24dp">
+    </item>
+
+    <item android:id="@+id/delete_products_items"
+        android:visible="false"
+        android:title="delete_products"
+        app:showAsAction="always"
+        android:icon="@drawable/round_delete_forever_24">
+    </item>
+
+    <item android:id="@+id/show_selected_contacts_item"
+        android:title="show_selected_contacts"
+        app:showAsAction="always"
+        android:icon="@drawable/round_group_24">
+    </item>
+
+</menu>

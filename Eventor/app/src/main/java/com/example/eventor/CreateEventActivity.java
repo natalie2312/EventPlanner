@@ -4,15 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -24,10 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,11 +41,13 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+
+import static com.example.eventor.SignInActivity.SIGN_IN_PREF;
 
 public class CreateEventActivity extends AppCompatActivity {
 
+    private static final int CREATE_GROUP_REQUEST = 55;
     private FirebaseDatabase db;
     private DatabaseReference ref;
 
@@ -57,14 +60,10 @@ public class CreateEventActivity extends AppCompatActivity {
     private ListView contanerEvents;
 
 
-    private ArrayAdapter<String> adapter;
-    //private ArrayList<String> itemList;
-    private ArrayList<String> productsList;
-
-    private Map<String, String> productsMap;
-
-    private ListView productsListView;
     private ProductsListAdapter productsListAdapter;
+   private ArrayList<Product> productsList;
+
+
 
     private ImageView imageEvent;
     private SelectImageDialogFragment selectImageDialogFragment;
@@ -73,11 +72,14 @@ public class CreateEventActivity extends AppCompatActivity {
     private String eventNameStr;
     private String dateStr;
     private String locationStr;
+    private String userName;
+    private ArrayList<Contact> contactsList;
+
+    private String phoneNumber;
 
     private FloatingActionButton fabAddPerson;
 
 
-    private Event newEvent;
     private EventFirebaseHelper eventFirebaseHelper;
     private Bitmap eventBitmap;
 
@@ -87,6 +89,24 @@ public class CreateEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        //toolbar controller
+        Toolbar toolbarMenu = (Toolbar) findViewById(R.id.toolbar_menu);
+        setSupportActionBar(toolbarMenu);
+
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        phoneNumber = currentUser.getPhoneNumber();
+
+
+        SharedPreferences sharedPref = getSharedPreferences(SIGN_IN_PREF, Context.MODE_PRIVATE);
+        String phone = sharedPref.getString(getString(R.string.save_phone_number), phoneNumber);
+        userName = sharedPref.getString(getString(R.string.save_user_name), phoneNumber);
+
+        contactsList = new ArrayList<>();
+        Contact mContact = new Contact(userName, phoneNumber);
+        contactsList.add(mContact);
 
         eventFirebaseHelper = new EventFirebaseHelper();
 
@@ -108,40 +128,39 @@ public class CreateEventActivity extends AppCompatActivity {
 
         saveButton = findViewById(R.id.finish);
         productsList = new ArrayList<>();
-        productsMap = new HashMap<>();
 
         eventName = (EditText) findViewById(R.id.event_name);
         date = (EditText) findViewById(R.id.date);
-        location= (EditText) findViewById(R.id.location);
+        location = (EditText) findViewById(R.id.location);
         contanerEvents = (ListView) findViewById(R.id.container_events);
-        newEvent = new Event(eventNameStr, dateStr, locationStr);
 
         ref = FirebaseDatabase.getInstance().getReference("Events");
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 eventNameStr = eventName.getText().toString();
                 if (TextUtils.isEmpty(eventNameStr)){
                     eventName.setError("required");
                     return;
                 }
-
-
                 dateStr = date.getText().toString();
                 if (TextUtils.isEmpty(dateStr) ) {
                     date.setError("required");
                     return;
                 }
-
                 locationStr = location.getText().toString();
                 if(TextUtils.isEmpty(locationStr)) {
                     location.setError("required");
                     return;
                 }
                 Event event = new Event(eventNameStr, dateStr, locationStr);
-                event.setProductsMap(productsMap);
+                event.setProducts(productsList);
+
+                Contact mContact = new Contact(userName, phoneNumber);
+                contactsList.add(mContact);
+                event.setContacts(contactsList);
+
                 saveEvent(event);
 
                 clear_form();
@@ -153,18 +172,13 @@ public class CreateEventActivity extends AppCompatActivity {
         Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddItem(newEvent);
+                addItem(/*newEvent*/);
             }
         });
 
 
-
-        adapter = new ArrayAdapter<String>(CreateEventActivity.this, R.layout.product_item, R.id.item_title, productsList);
-        contanerEvents.setAdapter(adapter);
-
-//        productsListAdapter = new ProductsListAdapter(this, isManager, "Omer", currentEvent);
-        //productsListAdapter = new ProductsListAdapter(this, isManager, userName, productsList);
-//        productsListView.setAdapter(productsListAdapter);
+        productsListAdapter = new ProductsListAdapter(this, true, "Omer", productsList, false);
+        contanerEvents.setAdapter(productsListAdapter);
 
         contanerEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -179,28 +193,25 @@ public class CreateEventActivity extends AppCompatActivity {
         fabAddPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fabAddPerson.setEnabled(false);
                 openContactList();
             }
         });
 
     }
 
-    private void AddItem(final Event event){
+    private void addItem(){
         final EditText itemEdiText= new EditText(this);
-        AlertDialog dialog= new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("new Item:")
                 .setView(itemEdiText)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(CreateEventActivity.this, itemEdiText.getText().toString(), Toast.LENGTH_SHORT).show();
-                        //TODO: save to firebase
-                        String item = String.valueOf(itemEdiText.getText());
-                        //EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
-                        eventFirebaseHelper.addProduct(event.getId(), item);
-                        productsList.add(item);
-                        adapter.notifyDataSetChanged();
-                        productsMap.put(item, "");
+                        String n = itemEdiText.getText().toString();
+                        Product p = new Product(n);
+                        productsList.add(p);
+                        productsListAdapter.updateProducts(productsList);
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -209,8 +220,11 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private void moveToEventActivity(Event event){
-        Intent currentEventIntent= new Intent(CreateEventActivity.this, EventActivity.class);
-        currentEventIntent.putExtra(getString(R.string.intent_current_event) ,event);
+        Intent currentEventIntent = new Intent(CreateEventActivity.this, EventActivity.class);
+        currentEventIntent.putExtra(getString(R.string.intent_phone_number), phoneNumber);
+        currentEventIntent.putExtra(getString(R.string.intent_user_name), userName);
+        currentEventIntent.putExtra(getString(R.string.intent_is_manager), true);
+        currentEventIntent.putExtra(getString(R.string.intent_current_event), event);
         startActivity(currentEventIntent);
         finish();
     }
@@ -219,15 +233,17 @@ public class CreateEventActivity extends AppCompatActivity {
      * This method open the contact list to create order list for the event.
      */
     private void openContactList(){
-
+        startActivityForResult(new Intent(this, ContactsActivity.class), CREATE_GROUP_REQUEST);
     }
+
+
 
     private void clear_form() {
         eventName.getText().clear();
         location.getText().clear();
         date.getText().clear();
     }
-/**/
+
     private void saveEvent(Event event){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -237,9 +253,20 @@ public class CreateEventActivity extends AppCompatActivity {
         EventFirebaseHelper eventFirebaseHelper = new EventFirebaseHelper();
         eventFirebaseHelper.insertNewEvent(event.getId(), event);
 
+        Iterator<Contact> iteratorContactsList = contactsList.iterator();
+        while (iteratorContactsList.hasNext()){
+            Contact cContact = iteratorContactsList.next();
+            UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper();
+            if (cContact.getPhoneNumber().equals(phoneNumber)){
+                userFirebaseHelper.addEvent(phoneNumber, event.getId(), true);
+            } else {
+                userFirebaseHelper.addEvent(cContact.getPhoneNumber(), event.getId(), false);
+            }
+        }
 
-        UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
-        userFirebaseHelper.addEvent(phoneNumber, event.getId(), true);
+
+
+
         if (eventBitmap != null){
             addImage(event.getId(), eventBitmap);
         }
@@ -255,10 +282,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String productToRemove = productsList.get(position);
-                        productsMap.remove(productToRemove);
-                        productsList.remove(position);
-                        adapter.notifyDataSetChanged();
+                        Product productToRemove = productsList.get(position);
+                        productsList.remove(productToRemove);
+                        productsListAdapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -275,13 +301,20 @@ public class CreateEventActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        selectImageDialogFragment.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case CREATE_GROUP_REQUEST:
+                fabAddPerson.setEnabled(true);
+                if (resultCode == RESULT_OK) {
+                    contactsList = (ArrayList<Contact>) data.getSerializableExtra(getString(R.string.selected_contacts_list));
+                }
+                break;
+            case SelectImageDialogFragment.REQUEST_GALLERY:
+            case SelectImageDialogFragment.REQUEST_CAMERA:
+                selectImageDialogFragment.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
     }
-
-
-
-
 
     public void addImage(final String eventId, Bitmap bitmap) {
 
@@ -291,7 +324,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         final StorageReference imageReference = storageReference.child("Images").child("EventImages").child(eventId + ".png");
-        //StorageReference imageReference = storageReference.child("/Images/EventImages/" + eventId + ".png");
 
 
         if (imageBytes != null) {
@@ -332,6 +364,48 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
 
+    }
+
+
+
+
+
+
+
+    //toolbar controller with logout button
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_create_new_event, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.beck_to_events_list_item:
+                backToEventsList();
+                break;
+            case R.id.show_selected_contacts_item:
+                if (!contactsList.isEmpty()) {
+                    showSelectedContacts(contactsList);
+                } else {
+                    Toast.makeText(this, "Your list is empty", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void backToEventsList(){
+        finish();
+    }
+
+
+    private void showSelectedContacts(ArrayList<Contact> selectedContacts){
+        Intent showContactsIntent = new Intent(this, ShowSelectedGroupActivity.class);
+        showContactsIntent.putExtra("show_selected_contacts", selectedContacts);
+        startActivity(showContactsIntent);
     }
 
 

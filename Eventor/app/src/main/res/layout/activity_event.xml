@@ -4,6 +4,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
 
+    <include android:id="@+id/toolbar_menu"
+        layout="@layout/toolbar_menu"/>
+
     <RelativeLayout
         android:id="@+id/name_event_container"
         android:layout_width="match_parent"
