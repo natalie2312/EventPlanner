@@ -1,10 +1,8 @@
 package com.example.eventor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class User implements Serializable {
 

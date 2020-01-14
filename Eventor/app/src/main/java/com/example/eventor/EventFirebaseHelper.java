@@ -1,33 +1,18 @@
 package com.example.eventor;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.icu.text.Edits;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +22,12 @@ public class EventFirebaseHelper {
 
     private final static String EVENTS = "Events";
     private final static String PRODUCTS_MAP = "productsMap";
+    private final static String PRODUCTS = "products";
+    private final static String PRODUCT_NAME = "name";
+    private final static String BRING_PRODUCT = "howBring";
     private final static String ID = "id";
+    private static final String INVITED_MAP = "invitedMap";
+    private static final String CONTACTS = "contacts";
 
 
     private FirebaseDatabase firebaseDatabase;
@@ -55,30 +45,86 @@ public class EventFirebaseHelper {
         databaseReference.child(EVENTS).child(eventId).setValue(newEvent);
     }
 
-    public void changeProduct(final String idEvent, final String thisProduct, final String productToChange/*, final Context context, final boolean isManager, final ListView productsListView, final ArrayAdapter adapter*/) {
-        Query changeProductQuery = databaseReference.child(EVENTS);
+    public void getInvitedMap(final String eventId, final ArrayList<Contact> contactsList) {
+        Query getInvitedMap = databaseReference.child(EVENTS);
+        getInvitedMap.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (data.getKey().equals(eventId)) {
+                        contactsList.clear();
+                        ArrayList<Contact> contacts = (ArrayList<Contact>) data.child(CONTACTS).getValue();
+                        for (int i = 0; i < contacts.size(); i++) {
+                            String name = data.child(CONTACTS).child(String.valueOf(i)).child("name").getValue(String.class);
+                            String phoneNumber = data.child(CONTACTS).child(String.valueOf(i)).child("phoneNumber").getValue(String.class);
+                            Boolean isSelected = data.child(CONTACTS).child(String.valueOf(i)).child("selected").getValue(Boolean.class);
+                            Contact contact = new Contact(name, phoneNumber);
+                            contact.setSelected(isSelected);
+                            contactsList.add(contact);
+                        }
+                    }
+                }
+            }
 
-        changeProductQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
+
+
+    public void changeHowBring(final String eventId, final Product product) {
+        Query changeHowBringQuery = databaseReference.child(EVENTS);
+        changeHowBringQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     String key = data.getKey();
-                    String d = data.child(ID).getValue(String.class);
-                    if (d.equals(idEvent)) {
-                        ArrayList<String> productsList = new ArrayList<>();
-                        for (DataSnapshot ref : data.child(PRODUCTS_MAP).getChildren()) {
-
-                            String product = ref.getValue(String.class);
-                            productsList.add(product);
-                            if (product.equals(thisProduct)) {
-                                productsList.set(productsList.indexOf(thisProduct), productToChange);
-                                String k = ref.getRef().getKey();
-                                ref.getRef().setValue(productToChange);
+                    if (key.equals(eventId)) {
+                        ArrayList<Product> prodList = new ArrayList<>();
+                        prodList = (ArrayList<Product>) data.child(PRODUCTS).getValue();
+                        for (int i = 0; i < prodList.size(); i++) {
+                            String nameProd = data.child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).getValue(String.class);
+                            String howBringProd = data.child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).getValue(String.class);
+                            if (nameProd.equals(product.getName())) {
+                                databaseReference.child(EVENTS).child(eventId).child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).setValue(product.getHowBring());
                             }
-                            //data.child("ProductsList").getRef().setValue(productsList);
                         }
-                        //ArrayAdapter adapter = new ProductsListAdapter(context, isManager, idEvent, productsList);
-                        //productsListView.setAdapter(adapter);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+
+    public void changeProductName(final String eventId, final Product preChange, final Product postChange, final ArrayList<Product> productsList, final ProductsListAdapter adapter) {
+        Query changeProductNameQuery = databaseReference.child(EVENTS);
+        changeProductNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    String key = data.getKey();
+                    if (key.equals(eventId)) {
+                        if (data.hasChild(PRODUCTS)) {
+                            productsList.clear();
+                            ArrayList<Product> products = (ArrayList<Product>) data.child(PRODUCTS).getValue();
+                            for (int i = 0; i < products.size(); i++) {
+                                String nameProd = data.child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).getValue(String.class);
+                                String howBringProd = data.child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).getValue(String.class);
+                                Product p = new Product(nameProd);
+                                p.setHowBring(howBringProd);
+                                if (nameProd.equals(preChange.getName())) {
+                                    p.setName(postChange.getName());
+                                    p.setHowBring(postChange.getHowBring());
+                                    databaseReference.child(EVENTS).child(eventId).child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).setValue(postChange.getName());
+                                    databaseReference.child(EVENTS).child(eventId).child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).setValue(postChange.getHowBring());
+                                }
+                                productsList.add(p);
+                            }
+                            adapter.updateProducts(productsList);
+                        }
                     }
                 }
             }
@@ -90,113 +136,150 @@ public class EventFirebaseHelper {
     }
 
 
-    public void addProduct(final String idEvent, final String product, final String howBring) {
+    public void deleteProducts(final String eventId, final ArrayList<Product> deleteProducts, final ArrayList<Product> productsList) {
+        Query deleteProductsQuery = databaseReference.child(EVENTS);
+        deleteProductsQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    String key = data.getKey();
+                    ArrayList<Product> allProducts = new ArrayList<>();
+                    if (data.hasChild(PRODUCTS)) {
+                        allProducts = (ArrayList<Product>) data.child(PRODUCTS).getValue();
+                        for (int i = 0; i < allProducts.size(); i++) {
+                            productsList.clear();
+                            String nameProd = data.child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).getValue(String.class);
+                            String howBringProd = data.child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).getValue(String.class);
+                            Product product = new Product(nameProd);
+                            product.setHowBring(howBringProd);
+                            Iterator<Product> iterator = deleteProducts.iterator();
+                            boolean toAdd = true;
+                            while (iterator.hasNext()) {
+                                Product p = iterator.next();
+                                if (nameProd.equals(p.getName())) {
+                                    toAdd = false;
+                                }
+                            }
+                            if (toAdd) {
+                                productsList.add(product);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public void addNewProduct(final String eventId, final Product newProduct, final ArrayList<Product> productsList, final ProductsListAdapter adapter) {
         Query addProductQuery = databaseReference.child(EVENTS);
-
-        addProductQuery.addValueEventListener(new ValueEventListener() {
+        addProductQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     String key = data.getKey();
-                    String id = data.child(ID).getValue(String.class);
-                    if (id.equals(idEvent)) {
-                        //ArrayList<String> productsList = new ArrayList<>();
-                        Map<String, String> productsMap = new HashMap<>();
-                        productsMap = data.child(PRODUCTS_MAP).getValue(Map.class);
-                        if (!productsMap.containsKey(product)) {
-                            databaseReference.child(EVENTS).child(key).child(PRODUCTS_MAP).setValue(product);
-                            databaseReference.child(EVENTS).child(key).child(PRODUCTS_MAP).child(product).setValue(howBring);
-
-                        }
-                        //for (DataSnapshot ref : data.child("productsList").getChildren()) {
-                        /*for (DataSnapshot productsSnapshot : data.child("productsMap").getChildren()) {
-                            String product = productsSnapshot.getValue(String.class);
-                            productsList.add(product);
-                            if (product.equals(thisProduct)) {
-                                productsList.set(productsList.indexOf(thisProduct), productToChange);
-                                String k = ref.getRef().getKey();
-                                ref.getRef().setValue(productToChange);
+                    ArrayList<Product> allProducts = new ArrayList<>();
+                    if (key.equals(eventId)) {
+                        boolean exist = false;
+                        if (data.hasChild(PRODUCTS)) {
+                            allProducts = (ArrayList<Product>) data.child(PRODUCTS).getValue();
+                            productsList.clear();
+                            for (int i = 0; i < allProducts.size(); i++) {
+                                String nameProd = data.child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).getValue(String.class);
+                                String howBringProd = data.child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).getValue(String.class);
+                                Product product = new Product(nameProd);
+                                product.setHowBring(howBringProd);
+                                productsList.add(product);
+                                if (nameProd.equals(newProduct.getName())) {
+                                    exist = true;
+                                }
                             }
-                            //data.child("ProductsList").getRef().setValue(productsList);
-                        }*/
-                        //ArrayAdapter adapter = new ProductsListAdapter(context, isManager, idEvent, productsList);
-                        //productsListView.setAdapter(adapter);
+                        }
+                        if (!exist) {
+                            int size = productsList.size();
+                            databaseReference.child(EVENTS).child(eventId).child(PRODUCTS).child(String.valueOf(size)).setValue(newProduct);
+                            productsList.add(newProduct);
+                        }
+                        //adapter.updateProducts(productsList);
                     }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
     }
 
-    public void addProduct(final String idEvent, final String product) {
-        addProduct(idEvent, product, "");
-    }
 
-    public void deleteProduct(String thisProduct) {
-        String key = databaseReference.child(EVENTS).child(PRODUCTS_MAP).child(thisProduct).getKey();
-        databaseReference.child(EVENTS).child(PRODUCTS_MAP).child(key).removeValue();
-    }
-
-
-    public void chageBringProduct(String eventId, String product) {
-        Query chageBringProductQuery = databaseReference.child(EVENTS);
-    }
-
-/*
-    public void addImage(final Context context, String eventId, Bitmap bitmap) {
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] imageBytes = byteArrayOutputStream.toByteArray();
-
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference imageReference = storageReference.child("Images").child("EventImages").child(eventId + ".png");
-        //StorageReference imageReference = storageReference.child("/Images/EventImages/" + eventId + ".png");
-
-
-        if (imageBytes != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle("Uploading");
-            progressDialog.show();
-
-
-            UploadTask uploadTask = (UploadTask) imageReference.putBytes(imageBytes).
-                    addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(context, "File Uploaded ", Toast.LENGTH_LONG).show();
+    public void getProducts(final String eventId, final ArrayList<Product> productsList, final ProductsListAdapter adapter){
+        Query getProductsQuery = databaseReference.child(EVENTS);
+        getProductsQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    String key = data.getKey();
+                    ArrayList<Product> allProducts = new ArrayList<>();
+                    if (key.equals(eventId)) {
+                        boolean exist = false;
+                        if (data.hasChild(PRODUCTS)) {
+                            allProducts = (ArrayList<Product>) data.child(PRODUCTS).getValue();
+                            productsList.clear();
+                            for (int i = 0; i < allProducts.size(); i++) {
+                                String nameProd = data.child(PRODUCTS).child(String.valueOf(i)).child(PRODUCT_NAME).getValue(String.class);
+                                String howBringProd = data.child(PRODUCTS).child(String.valueOf(i)).child(BRING_PRODUCT).getValue(String.class);
+                                Product product = new Product(nameProd);
+                                product.setHowBring(howBringProd);
+                                productsList.add(product);
+                            }
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            progressDialog.dismiss();
-                            Toast.makeText(context, exception.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            //displaying the upload progress
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
-                        }
-                    });
-        }
-
-
-    }
-*/
-
-    public void getImage(String eventId) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference getImageReference = storageReference.child("Images").child("EventImages").child(eventId + ".png");
-
+                        adapter.updateProducts(productsList);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 
 
+
+    public void changeEventDetails(final String eventId, final String changeText, final String detail) {
+        Query changeEventDetailsQuery = databaseReference.child(EVENTS);
+        changeEventDetailsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    String key = data.getKey();
+                    if (key.equals(eventId)) {
+                        if (data.hasChild(detail)) {
+                            databaseReference.child(EVENTS).child(key).child(detail).setValue(changeText);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+
+    public void getDetailValue(String eventId, String detail, final TextView tv){
+        Query getDetailValue = databaseReference.child(EVENTS).child(eventId).child(detail);
+        getDetailValue.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String valueDetail = dataSnapshot.getValue(String.class);
+                tv.setText(valueDetail);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+
+    }
 }

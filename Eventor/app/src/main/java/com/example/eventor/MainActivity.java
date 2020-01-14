@@ -13,8 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Boolean> eventsIdMap;
 
 
-    private ArrayAdapter eventsAdapter;
     private EventsListAdapter eventsListAdapter;
     private ArrayList<Event> eventsList;
     private ListView eventsListView;
@@ -87,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        //get the current usee
+        //get the current user
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null){
             //if current user not exist - got to SignInActivity
@@ -97,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             //if the current user exist - stay here in MainActivity
             //TODO: get user details
             phoneNumber = currentUser.getPhoneNumber();
-            userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
+            userFirebaseHelper = new UserFirebaseHelper(/*phoneNumber*/);
 
             //get phoneNumber and userName from the device
             SharedPreferences sharedPref = getSharedPreferences(SIGN_IN_PREF, Context.MODE_PRIVATE);
@@ -158,10 +156,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 eventsIdMap = new HashMap<>();
-                final boolean isManager = false;
+                //final boolean isManager = false;
                 for (DataSnapshot data : dataSnapshot.getChildren()){
                     eventsIdMap.put(data.getKey(), data.getValue(Boolean.class));
-
                 }
                 getEvent = databaseReference.child("Events");
                 getEvent.addValueEventListener(new ValueEventListener() {
@@ -171,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot data : dataSnapshot.getChildren()){
                             String id = data.getKey();
                             if (eventsIdMap.containsKey(id)){
-
                                 Event event = data.getValue(Event.class);
                                 eventsList.add(event);
                             }

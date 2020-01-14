@@ -1,11 +1,5 @@
 package com.example.eventor;
 
-import android.content.Context;
-import android.provider.ContactsContract;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -16,29 +10,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 public class UserFirebaseHelper {
 
+    private static final String USERS = "Users";
+    private static final String USER_EVENTS_LIST = "userEventsList";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
 
-    private String userName;
-    private String phoneNumber;
-    private User mUser;
 
 
 
 
 
-    public UserFirebaseHelper(String phoneNumber){
-        this.phoneNumber = phoneNumber;
+    public UserFirebaseHelper(){
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
-        getUserFromDB();
     }
 
 
@@ -47,7 +34,7 @@ public class UserFirebaseHelper {
 
         final String phoneNumber = newUser.getPhoneNumber();
 
-        Query insertUserQuery = databaseReference.child("Users");
+        Query insertUserQuery = databaseReference.child(USERS);
         insertUserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -61,7 +48,7 @@ public class UserFirebaseHelper {
                     }
                 }
                 if (!userExist){
-                    databaseReference.child("Users").child(newUser.getPhoneNumber()).setValue(newUser, new DatabaseReference.CompletionListener() {
+                    databaseReference.child(USERS).child(newUser.getPhoneNumber()).setValue(newUser, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             if (databaseError == null){
@@ -83,19 +70,17 @@ public class UserFirebaseHelper {
     }
 
 
-
-    public void addEvent(String phoneNumber, final String idEvent, boolean isManager){
-        //String phone = user.getUserPhoneNumber();
-        databaseReference.child("Users").child(phoneNumber).child("userEventsList").child(idEvent).setValue(isManager);
-    }
-
-
-    public void getUserNameFromDB(final String phoneNumber){
-        Query query = databaseReference;
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void addEvent(final String phoneNumber, final String idEvent, final boolean isManager){
+        Query addEventQuery = databaseReference.child(USERS);
+        addEventQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userName = dataSnapshot.child("Users").child(phoneNumber).child("userName").getValue(String.class);
+                for (DataSnapshot data:dataSnapshot.getChildren()) {
+                    String currentPhoneNumber = data.getKey();
+                    if (currentPhoneNumber.equals(phoneNumber)){
+                        databaseReference.child(USERS).child(phoneNumber).child(USER_EVENTS_LIST).child(idEvent).setValue(isManager);
+                    }
+                }
             }
 
             @Override
@@ -103,28 +88,4 @@ public class UserFirebaseHelper {
         });
     }
 
-    public void getUserFromDB(){
-        Query query = databaseReference;
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUser = dataSnapshot.child("Users").child(phoneNumber).getValue(User.class);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
-    }
-
-
-    //public String getUserName() {
-    //    return userName;
-    //}
-
-
-
-
-
-    public User getUser() {
-        return mUser;
-    }
 }

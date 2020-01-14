@@ -1096,6 +1096,10 @@ drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable person_add_white_24dp
+drawable round_arrow_back_24
+drawable round_delete_forever_24
+drawable round_done_24
+drawable round_group_24
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
@@ -1126,6 +1130,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id add_product_item
 id adjust_height
 id adjust_width
 id alertTitle
@@ -1134,6 +1139,8 @@ id always
 id async
 id auto
 id barrier
+id beck_to_create_new_event_item
+id beck_to_events_list_item
 id beginning
 id blocking
 id bottom
@@ -1151,11 +1158,13 @@ id chronometer
 id clip_horizontal
 id clip_vertical
 id collapseActionView
+id contacts_list_view
 id container
 id container_events
 id content
 id contentPanel
 id coordinator
+id create_group_fab
 id custom
 id customPanel
 id dark
@@ -1165,6 +1174,7 @@ id date_event_container
 id date_event_text_view
 id decor_content_parent
 id default_activity_button
+id delete_products_items
 id design_bottom_sheet
 id design_menu_item_action_area
 id design_menu_item_action_area_stub
@@ -1213,7 +1223,6 @@ id invisible
 id italic
 id item_product_checkbox
 id item_product_text_view
-id item_title
 id item_touch_helper_previous_elevation
 id labeled
 id largeLabel
@@ -1221,7 +1230,6 @@ id left
 id light
 id line1
 id line3
-id list
 id listMode
 id list_item
 id list_view_events
@@ -1239,6 +1247,7 @@ id mini
 id mtrl_child_content_container
 id mtrl_internal_children_alpha_tag
 id multiply
+id name_contact_text_view
 id name_event
 id name_event_container
 id name_event_text_view
@@ -1257,6 +1266,7 @@ id parent
 id parentPanel
 id parent_matrix
 id percent
+id phone_number_contact_text_view
 id pin
 id prefix_phone_spinner
 id progress_circular
@@ -1284,12 +1294,15 @@ id search_mag_icon
 id search_plate
 id search_src_text
 id search_voice_btn
+id select_contact_check_box
 id select_dialog_listview
 id selected
 id shortcut
 id showCustom
 id showHome
 id showTitle
+id show_contacts_list_view
+id show_selected_contacts_item
 id smallLabel
 id snackbar_action
 id snackbar_text
@@ -1326,6 +1339,7 @@ id time
 id title
 id titleDividerNoCustom
 id title_template
+id toolbar
 id toolbar_menu
 id top
 id topPanel
@@ -1398,6 +1412,7 @@ layout activity_contacts
 layout activity_create_event
 layout activity_event
 layout activity_main
+layout activity_show_selected_group
 layout activity_sign_in
 layout choose_image_dialog
 layout design_bottom_navigation_item
@@ -1414,8 +1429,9 @@ layout design_navigation_item_subheader
 layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_password_icon
-layout item_curren_event
+layout item_current_event
 layout item_exist_event
+layout item_select_contact
 layout mtrl_layout_snackbar
 layout mtrl_layout_snackbar_include
 layout notification_action
@@ -1433,13 +1449,14 @@ layout notification_template_media
 layout notification_template_media_custom
 layout notification_template_part_chronometer
 layout notification_template_part_time
-layout product_item
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 layout toolbar_menu
+menu menu_create_new_event
 menu menu_items
+menu menu_show_selected_contacts
 mipmap ic_launcher
 mipmap ic_launcher_round
 string abc_action_bar_home_description
@@ -1531,6 +1548,7 @@ string project_id
 string save_phone_number
 string save_user_name
 string search_menu_title
+string selected_contacts_list
 string status_bar_notification_info_overflow
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light

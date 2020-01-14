@@ -29,10 +29,19 @@
         android:supportsRtl="false"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.eventor.ShowSelectedGroupActivity"
+            android:label="Invited list" />
         <activity android:name="com.example.eventor.EventActivity" />
-        <activity android:name="com.example.eventor.ContactsActivity" />
-        <activity android:name="com.example.eventor.CreateEventActivity" />
-        <activity android:name="com.example.eventor.SignInActivity" />
+        <activity
+            android:name="com.example.eventor.ContactsActivity"
+            android:label="Select Contacts" />
+        <activity
+            android:name="com.example.eventor.CreateEventActivity"
+            android:label="Create new event" />
+        <activity
+            android:name="com.example.eventor.SignInActivity"
+            android:label="Sign in" />
         <activity android:name="com.example.eventor.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

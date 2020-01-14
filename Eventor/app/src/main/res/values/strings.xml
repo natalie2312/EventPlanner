@@ -6,5 +6,6 @@
     <string name="intent_user_name">intent_user_name</string>
     <string name="intent_is_manager">intent_is_manager</string>
     <string name="intent_current_event">intent_current_event</string>
+    <string name="selected_contacts_list">selected_contacts_list</string>
 
 </resources>

@@ -31,6 +31,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -60,18 +61,19 @@ public class SignInActivity extends AppCompatActivity {
 
 
 
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             Toast.makeText(SignInActivity.this, "Verification completed", Toast.LENGTH_LONG).show();
+
             String code = phoneAuthCredential.getSmsCode();
+            String prov = phoneAuthCredential.getProvider();
+            String sign = phoneAuthCredential.getSignInMethod();
             if (code != null){
                 verifyCode(code);
-                signInSuccess();
-                saveUserOnTheDevice();
-
             } else {
-                signInFailureUI();
+
             }
         }
 
@@ -133,7 +135,6 @@ public class SignInActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        //verificationId = new String();
 
         editTextUserName = (EditText) findViewById(R.id.edit_text_user_name);
         editTextPhoneNumber = (EditText) findViewById(R.id.edit_text_phone_number);
@@ -209,7 +210,6 @@ public class SignInActivity extends AppCompatActivity {
 
     private void verifyCode(String code){
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        //signInWithPhoneAuthCredential(credential);
         signInWithCredential(credential);
     }
 
@@ -237,7 +237,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void signInSuccess(){
         User newUser = new User(userName, phoneNumber);
-        UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper(phoneNumber);
+        UserFirebaseHelper userFirebaseHelper = new UserFirebaseHelper();
         userFirebaseHelper.insertNewUser(newUser);
         Intent mainIntent = new Intent(SignInActivity.this, MainActivity.class);
         startActivity(mainIntent);

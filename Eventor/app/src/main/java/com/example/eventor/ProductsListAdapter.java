@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import android.widget.TextView;
 
@@ -16,32 +15,31 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-import java.util.Map;
-
-class ProductsListAdapter extends ArrayAdapter<String> {
+class ProductsListAdapter extends ArrayAdapter<Product> {
 
     private Context context;
     private boolean isManager;
+    private boolean isEditable;
     private String userName;
-    private ArrayList<String> products;
+    private ArrayList<Product> products;
     private LayoutInflater inflater;
-    private Event event;
-    private Map productsMap;
 
     private CheckBox productCheckBox;
+    private TextView productTextView;
+    private TextView userNameTextView;
 
 
 
 
 
-    public ProductsListAdapter(@NonNull Context context, boolean isManager, String userName, ArrayList<String> products/*, ArrayList<String> gets*/, Event currentEvent) {
-        super(context, R.layout.item_curren_event, products);
+    public ProductsListAdapter(@NonNull Context context, boolean isManager, String userName, ArrayList<Product> products, boolean isEditable/*, Event currentEvent*/) {
+        super(context, R.layout.item_current_event, products);
 
         this.context = context;
         this.userName = userName;
         this.isManager = isManager;
-        this.event = currentEvent;
-        this.productsMap = event.getProductsMap();
+        this.isEditable = isEditable;
+
         this.products = products;
 
 
@@ -49,60 +47,58 @@ class ProductsListAdapter extends ArrayAdapter<String> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View productRow = convertView;
         if (productRow == null){
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            productRow = inflater.inflate(R.layout.item_curren_event, parent, false);
+            productRow = inflater.inflate(R.layout.item_current_event, parent, false);
         }
         productCheckBox = (CheckBox) productRow.findViewById(R.id.item_product_checkbox);
-        final TextView productTextView = (TextView) productRow.findViewById(R.id.item_product_text_view);
-        productTextView.setText(products.get(position));
-        final TextView userNameTextView = (TextView) productRow.findViewById(R.id.user_name_text_view_event);
-
-        String name = (String) productsMap.get(products.get(position));
-        if (name.equals("")){
+        productCheckBox.setClickable(false);
+        if (isEditable){
             productCheckBox.setVisibility(View.VISIBLE);
-            productCheckBox.setChecked(false);
-            userNameTextView.setText(name);
-            //toggleCrossLineText(productTextView);
-        } else if (name.equals(userName)){
-            productCheckBox.setVisibility(View.VISIBLE);
-            productCheckBox.setChecked(true);
-            userNameTextView.setText(name);
-            toggleCrossLineText(productTextView);
-        } else {
-            productCheckBox.setVisibility(View.INVISIBLE);
-            userNameTextView.setText(name);
-            productCheckBox.setChecked(true);
-            toggleCrossLineText(productTextView);
         }
+        productTextView = (TextView) productRow.findViewById(R.id.item_product_text_view);
+        productTextView.setText(products.get(position).getName());
+        userNameTextView = (TextView) productRow.findViewById(R.id.user_name_text_view_event);
 
-        //Checkbox listener
-        productCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    userNameTextView.setText(userName);
-                    toggleCrossLineText(productTextView);
-                } else {
-                    userNameTextView.setText("");
-                    toggleCrossLineText(productTextView);
-                }
-            }
-        });
+        Product p = products.get(position);
+        if (isEditable) {
+            userNameTextView.setVisibility(View.VISIBLE);
+            userNameTextView.setText(p.getHowBring());
+            if (p.getHowBring().equals("")) {
+                productCheckBox.setVisibility(View.VISIBLE);
+                productCheckBox.setChecked(false);
+            } else if (p.getHowBring().equals(userName)) {
+                productCheckBox.setVisibility(View.VISIBLE);
+                productCheckBox.setChecked(true);
+            } else {
+                productCheckBox.setVisibility(View.INVISIBLE);
+                productCheckBox.setChecked(true);
+           }
+            toggleCrossLineText();
+        } else {
+            productTextView.setText(p.getName());
+        }
         return productRow;
     }
 
     /**
      * This method add or remove cross line on given TextView
-     * @param tv TextView for add or remove cross line
      */
-    private void toggleCrossLineText(TextView tv){
-        if (!tv.getPaint().isStrikeThruText()){
-            tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    private void toggleCrossLineText(){
+        if (userNameTextView.getText().toString().equals("")){
+            productTextView.setPaintFlags(productTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
-            tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            productTextView.setPaintFlags(productTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
     }
+
+
+
+    public void updateProducts(ArrayList<Product> products){
+        this.products = products;
+        notifyDataSetChanged();
+    }
+
 }
