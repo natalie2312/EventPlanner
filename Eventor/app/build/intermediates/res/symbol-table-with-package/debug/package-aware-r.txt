@@ -1074,6 +1074,7 @@ drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable ic_menu_white_24dp
 drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
@@ -1183,6 +1184,7 @@ id design_navigation_view
 id dimensions
 id direct
 id disableHome
+id drawer_layout
 id edit_query
 id edit_text_phone_number
 id edit_text_user_name
@@ -1204,6 +1206,7 @@ id filled
 id finish
 id fixed
 id forever
+id fragment_container
 id gallery_image_button
 id ghost_view
 id glide_custom_view_target_tag
@@ -1252,6 +1255,8 @@ id name_event
 id name_event_container
 id name_event_text_view
 id nav_controller_view_tag
+id nav_logout
+id nav_view
 id navigation_header_container
 id never
 id none
@@ -1341,6 +1346,7 @@ id titleDividerNoCustom
 id title_template
 id toolbar
 id toolbar_menu
+id toolbar_menu_tt
 id top
 id topPanel
 id touch_outside
@@ -1434,6 +1440,7 @@ layout item_exist_event
 layout item_select_contact
 layout mtrl_layout_snackbar
 layout mtrl_layout_snackbar_include
+layout nav_header
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action
@@ -1454,6 +1461,7 @@ layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 layout toolbar_menu
+menu drawer_menu
 menu menu_create_new_event
 menu menu_items
 menu menu_show_selected_contacts
@@ -1539,6 +1547,8 @@ string intent_user_name
 string mtrl_chip_close_icon_content_description
 string nav_app_bar_navigate_up_description
 string nav_app_bar_open_drawer_description
+string navigation_drawer_close
+string navigation_drawer_open
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through

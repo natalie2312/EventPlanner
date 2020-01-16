@@ -1,8 +1,11 @@
 package com.example.eventor;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +18,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView eventsListView;
 
 
-    private Toolbar toolbarMenu;
+
+    //private Toolbar toolbarMenu;
+    private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
 
     private Query getEventsQuery;
     private Query getEvent;
@@ -66,8 +74,14 @@ public class MainActivity extends AppCompatActivity {
     private String phoneNumber;
 
 
-
-
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,8 +142,30 @@ public class MainActivity extends AppCompatActivity {
             });
 
             //toolbar controller
-            toolbarMenu = (Toolbar) findViewById(R.id.toolbar_menu);
-            setSupportActionBar(toolbarMenu);
+            /*toolbarMenu = (Toolbar) findViewById(R.id.toolbar_menu);
+            setSupportActionBar(toolbarMenu);*/
+            toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            drawerLayout = findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawerLayout.addDrawerListener(actionBarDrawerToggle);
+            actionBarDrawerToggle.syncState();
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()){
+                        case R.id.nav_logout:
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                            mAuth.signOut();
+                            onStart();
+                            break;
+                    }
+                    return true;
+                }
+            });
+
+
 
             //create new event controller
             fabCreateNewEvent = (FloatingActionButton) findViewById(R.id.fab);
@@ -220,9 +256,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     //toolbar controller with logout button
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_items, menu);
         return super.onCreateOptionsMenu(menu);
@@ -235,6 +270,8 @@ public class MainActivity extends AppCompatActivity {
                 onStart();
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
+
+
 
 }

@@ -1016,6 +1016,10 @@
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\drawable-xxxhdpi-v4\\abc_ic_menu_copy_mtrl_am_alpha.png"
     },
     {
+        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\menu_drawer_menu.xml.flat",
+        "source": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\src\\main\\res\\menu\\drawer_menu.xml"
+    },
+    {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\drawable-xxhdpi-v4\\abc_btn_radio_to_on_mtrl_000.png"
     },
@@ -1216,6 +1220,10 @@
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\3295b8d0bda86d39fcda21b87c31a4e7\\material-1.0.0\\res\\color\\mtrl_btn_text_color_selector.xml"
     },
     {
+        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\layout_nav_header.xml.flat",
+        "source": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\src\\main\\res\\layout\\nav_header.xml"
+    },
+    {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_primary_text_material_dark.xml.flat",
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\color\\abc_primary_text_material_dark.xml"
     },
@@ -1286,6 +1294,10 @@
     {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\drawable-xhdpi-v4\\abc_ic_menu_cut_mtrl_alpha.png"
+    },
+    {
+        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_white_24dp.xml.flat",
+        "source": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\src\\main\\res\\drawable\\ic_menu_white_24dp.xml"
     },
     {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_big_media_narrow.xml.flat",
@@ -1584,12 +1596,12 @@
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\color\\abc_tint_switch_track.xml"
     },
     {
-        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat",
-        "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\drawable-xxxhdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png"
-    },
-    {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\menu_menu_show_selected_contacts.xml.flat",
         "source": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\src\\main\\res\\menu\\menu_show_selected_contacts.xml"
+    },
+    {
+        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat",
+        "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\drawable-xxxhdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png"
     },
     {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v21_abc_edit_text_material.xml.flat",
@@ -1664,12 +1676,12 @@
         "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\b86f782fc38280792c753b7008811558\\play-services-base-17.1.0\\res\\color\\common_google_signin_btn_text_dark.xml"
     },
     {
-        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_background_cache_hint_selector_material_light.xml.flat",
-        "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\color\\abc_background_cache_hint_selector_material_light.xml"
-    },
-    {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_round_arrow_back_24.xml.flat",
         "source": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\src\\main\\res\\drawable-v24\\round_arrow_back_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_background_cache_hint_selector_material_light.xml.flat",
+        "source": "C:\\Users\\Edut\\.gradle\\caches\\transforms-2\\files-2.1\\d97474f8f6bd0b4e859655312e2c777c\\appcompat-1.0.2\\res\\color\\abc_background_cache_hint_selector_material_light.xml"
     },
     {
         "merged": "C:\\Users\\Edut\\AndroidStudioProjects\\GitProjects\\Eventor\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_switch_thumb_material.xml.flat",

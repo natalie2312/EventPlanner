@@ -8,4 +8,7 @@
     <string name="intent_current_event">intent_current_event</string>
     <string name="selected_contacts_list">selected_contacts_list</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>
